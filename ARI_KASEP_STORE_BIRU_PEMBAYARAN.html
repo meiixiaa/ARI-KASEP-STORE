@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARI KASEP STORE</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f7f7f7;color:#222}
+header{background:#0757A6;color:#fff;padding:16px 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 3px 12px #0002}
+.logo{font-size:22px;font-weight:800}
+nav button{border:0;background:#fff;color:#0757A6;padding:9px 13px;border-radius:8px;font-weight:700;cursor:pointer;margin-left:5px}
+.hero{background:linear-gradient(135deg,#0757A6,#0B78D0);color:#fff;padding:65px 7%}
+.hero h1{font-size:42px;margin-bottom:10px}.hero p{font-size:17px}
+.hero button,.checkout,.confirm{margin-top:22px;border:0;background:#fff;color:#0757A6;padding:12px 20px;border-radius:8px;font-weight:700;cursor:pointer}
+.container{width:90%;max-width:1150px;margin:35px auto}
+.page{display:none}.page.active{display:block}
+h2{color:#0757A6;margin-bottom:8px}
+.categories{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.categories button{background:#fff;border:1px solid #0757A6;color:#0757A6;padding:9px 15px;border-radius:20px;cursor:pointer}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:17px}
+.product,.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 3px 15px #00000012}
+.icon{font-size:38px}.price{color:#0757A6;font-weight:800;margin:10px 0}
+.product button{width:100%;border:0;background:#0757A6;color:#fff;padding:11px;border-radius:8px;font-weight:700;cursor:pointer}
+.cart-item{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:14px 0}
+.cart-item button{border:0;padding:7px 10px;border-radius:6px;cursor:pointer}
+.total{font-size:20px;font-weight:800;color:#0757A6;margin-top:20px}
+.checkout{background:#0757A6;color:#fff}
+.payment{max-width:700px;margin:auto}
+.summary{background:#eef7ff;border-left:4px solid #0757A6;padding:15px;border-radius:8px;margin:18px 0}
+.methods{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.methods button{flex:1;min-width:120px;background:#fff;border:1px solid #ddd;padding:13px;border-radius:8px;cursor:pointer;font-weight:700}
+.methods button.selected{border:2px solid #0757A6;color:#0757A6;background:#eaf4ff}
+.info{background:#f3f3f3;padding:16px;border-radius:9px}
+input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-top:10px}
+.confirm{width:100%;background:#0757A6;color:#fff}
+footer{margin-top:55px;background:#0757A6;color:#fff;text-align:center;padding:24px}
+@media(max-width:600px){.hero h1{font-size:32px}header{padding:14px 3%}.logo{font-size:18px}nav button{font-size:11px;padding:8px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">ARI KASEP STORE</div>
+<nav>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('cart')">🛒 Keranjang <span id="count">0</span></button>
+</nav>
+</header>
+
+<div id="home" class="page active">
+<section class="hero">
+<h1>ARI KASEP STORE</h1>
+<p>Solusi kebutuhan digital cepat, mudah & terpercaya.</p>
+<button onclick="document.getElementById('produk').scrollIntoView({behavior:'smooth'})">Belanja Sekarang</button>
+</section>
+<div class="container" id="produk">
+<h2>Produk Digital</h2><p>Pilih produk yang kamu butuhkan.</p>
+<div class="categories">
+<button onclick="filter('all')">Semua</button><button onclick="filter('pulsa')">📱 Pulsa</button>
+<button onclick="filter('data')">📶 Data</button><button onclick="filter('ewallet')">💳 E-Wallet</button>
+<button onclick="filter('game')">🎮 Game</button><button onclick="filter('pln')">💡 PLN</button>
+</div>
+<div class="products" id="products"></div>
+</div>
+</div>
+
+<div id="cart" class="page">
+<div class="container">
+<h2>🛒 Keranjang</h2><p>Periksa pesanan sebelum membayar.</p>
+<div class="card" style="margin-top:18px">
+<div id="items"></div><div class="total">Total: <span id="total">Rp0</span></div>
+<button class="checkout" onclick="openPayment()">Lanjut ke Pembayaran</button>
+</div>
+</div>
+</div>
+
+<div id="payment" class="page">
+<div class="container payment">
+<h2>💳 Pembayaran</h2><p>Silakan pilih metode pembayaran.</p>
+<div class="card" style="margin-top:18px">
+<div class="summary"><b>Ringkasan Pesanan</b><div id="summary"></div><hr style="margin:12px 0"><b>Total: <span id="payTotal"></span></b></div>
+<h3>Metode Pembayaran</h3>
+<div class="methods">
+<button onclick="pay('DANA',this)">💙 DANA</button>
+<button onclick="pay('QRIS',this)">📲 QRIS</button>
+<button onclick="pay('GoPay',this)">💚 GoPay</button>
+<button onclick="pay('OVO',this)">💜 OVO</button>
+<button onclick="pay('Bank',this)">🏦 Bank</button>
+</div>
+<div class="info" id="info">Pilih metode pembayaran.</div>
+<input id="name" placeholder="Nama kamu">
+<input id="contact" placeholder="Nomor WhatsApp / Telegram">
+<button class="confirm" onclick="confirmOrder()">✅ Konfirmasi Pembayaran via WhatsApp</button>
+</div>
+</div>
+</div>
+
+<footer><b>ARI KASEP STORE</b><br>Kebutuhan digital cepat & mudah.</footer>
+
+<script>
+const products=[
+{id:1,name:"Pulsa 5.000",cat:"pulsa",price:7000,icon:"📱"},
+{id:2,name:"Pulsa 10.000",cat:"pulsa",price:12000,icon:"📱"},
+{id:3,name:"Pulsa 20.000",cat:"pulsa",price:22000,icon:"📱"},
+{id:4,name:"Pulsa 50.000",cat:"pulsa",price:52000,icon:"📱"},
+{id:5,name:"Data 5GB",cat:"data",price:15000,icon:"📶"},
+{id:6,name:"Data 10GB",cat:"data",price:25000,icon:"📶"},
+{id:7,name:"Data 20GB",cat:"data",price:40000,icon:"📶"},
+{id:8,name:"DANA 20K",cat:"ewallet",price:22000,icon:"💳"},
+{id:9,name:"DANA 50K",cat:"ewallet",price:52000,icon:"💳"},
+{id:10,name:"GoPay 20K",cat:"ewallet",price:22000,icon:"💚"},
+{id:11,name:"GoPay 50K",cat:"ewallet",price:52000,icon:"💚"},
+{id:12,name:"ML 86 Diamond",cat:"game",price:25000,icon:"🎮"},
+{id:13,name:"ML 172 Diamond",cat:"game",price:48000,icon:"🎮"},
+{id:14,name:"FF 70 Diamond",cat:"game",price:12000,icon:"🎮"},
+{id:15,name:"FF 140 Diamond",cat:"game",price:23000,icon:"🎮"},
+{id:16,name:"Token PLN 20K",cat:"pln",price:22000,icon:"💡"},
+{id:17,name:"Token PLN 50K",cat:"pln",price:52000,icon:"💡"}
+];
+let cart=[],method="";
+const rupiah=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n);
+
+function display(list=products){
+document.getElementById("products").innerHTML=list.map(p=>`
+<div class="product"><div class="icon">${p.icon}</div><h3>${p.name}</h3>
+<div class="price">${rupiah(p.price)}</div><button onclick="add(${p.id})">+ Tambah</button></div>`).join("");
+}
+function filter(cat){display(cat==="all"?products:products.filter(p=>p.cat===cat))}
+function add(id){cart.push(products.find(p=>p.id===id));update();alert("Produk ditambahkan ke keranjang.")}
+function remove(i){cart.splice(i,1);update()}
+function update(){
+document.getElementById("count").textContent=cart.length;
+let total=cart.reduce((s,p)=>s+p.price,0);
+document.getElementById("items").innerHTML=cart.length?cart.map((p,i)=>`
+<div class="cart-item"><span>${p.icon} <b>${p.name}</b><br>${rupiah(p.price)}</span>
+<button onclick="remove(${i})">Hapus</button></div>`).join(""):"<p>Keranjang masih kosong.</p>";
+document.getElementById("total").textContent=rupiah(total);
+}
+function showPage(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");scrollTo(0,0)}
+function openPayment(){
+if(!cart.length)return alert("Keranjang masih kosong.");
+let total=cart.reduce((s,p)=>s+p.price,0);
+document.getElementById("summary").innerHTML=cart.map(p=>`<p>${p.name} — ${rupiah(p.price)}</p>`).join("");
+document.getElementById("payTotal").textContent=rupiah(total);showPage("payment");
+}
+function pay(m,b){
+method=m;document.querySelectorAll(".methods button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");
+let detail={
+DANA:"Nomor DANA: 0881025831441 — IIN",
+QRIS:"Silakan gunakan QRIS ARI KASEP STORE.",
+GoPay:"Nomor GoPay: 08815850248 — IIN",
+OVO:"Hubungi admin untuk nomor OVO.",
+Bank:"SEABANK: 901918134885 — IIN"
+};
+document.getElementById("info").innerHTML=`<b>${m}</b><br><br>${detail[m]}<br><br>Pastikan nominal sesuai total pesanan.`;
+}
+function confirmOrder(){
+let name=document.getElementById("name").value.trim(),contact=document.getElementById("contact").value.trim();
+if(!method)return alert("Pilih metode pembayaran.");
+if(!name||!contact)return alert("Isi nama dan nomor kontak.");
+let total=cart.reduce((s,p)=>s+p.price,0),list=cart.map(p=>`- ${p.name} (${rupiah(p.price)})`).join("%0A");
+let msg=`Halo ARI KASEP STORE,%0A%0ASaya ingin melakukan pembayaran.%0A%0ANama: ${encodeURIComponent(name)}%0AKontak: ${encodeURIComponent(contact)}%0AMetode: ${method}%0A%0APesanan:%0A${list}%0A%0ATotal: ${encodeURIComponent(rupiah(total))}%0A%0AMohon konfirmasi pesanan saya.`;
+window.open("https://wa.me/6282317815936?text="+msg,"_blank");
+}
+display();update();
+</script>
+</body>
+</html>
